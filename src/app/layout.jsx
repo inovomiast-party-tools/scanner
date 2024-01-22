@@ -4,7 +4,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "INTPScanner",
+  title: "INPTScanner",
   description: "Ticket QrCode Scanner for INovomiast Parties",
 };
 
