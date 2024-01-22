@@ -15,9 +15,7 @@ const assistantSchema = new mongoose.Schema({
         required: true
     },
     assistantAssistance: {
-        type: Boolean,
-        required: false,
-        default: false
+        type: Boolean
     }
 });
 

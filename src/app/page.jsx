@@ -16,24 +16,42 @@ export default function Home() {
     setQrResult(false);
   };
 
-  const doApiRequest = (assistandId) => {
+  const acceptAssistance = (assistantId) => {
+    const response = axios.patch(`/api/assistants/${assistantId}`, { "assistantAssistance": true });
+    response.then((res) => {
+      if (res.status === 200) {
+        return console.info("Assistance Accepted: ", res.data);
+      }
+    })
+  }
+
+  const doApiRequest = (assistantId) => {
     try {
+      console.log(assistantId)
       // Check if the assistantId is valid
-      const response = axios.get(`/api/assistants/${assistandId}`);
-      const { data } = response;
-      console.info(data);
+      const response = axios.get(`/api/assistants/${assistantId}`);
+      response.then((res) => {
+        if (res.status === 200) {
+          if (res?.data?.assistantAssistance != true && res?.data?.assistantId)
+            return acceptAssistance(assistantId);
+          else
+            setConfirm(false);
+            setTicketData("Ticket Already Confirmed!");
+            setQrResult(false);
+        }
+      })
     } catch (error) {
       console.error(error.message);
     }
   }
 
-  const sendAssist = (assistandId) => {
-    console.info(assistandId);
+  const sendAssist = (assistantId) => {
+    console.info(assistantId);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setConfirm(true);
-      doApiRequest(assistandId);
+      doApiRequest(assistantId);
       setTimeout(() => {
         setConfirm(false);
         resetQrCode();
@@ -50,9 +68,6 @@ export default function Home() {
             setTicketData(`${result?.text}`);
             setQrResult(true);
           }
-          if (!!error) {
-            console.error(error);
-          }
         }}
         className={`w-[300px] h-[300px] rounded-lg border-4 ${
           qrResult ? "border-green-500" : "border-gray-500"
@@ -60,7 +75,7 @@ export default function Home() {
         videoContainerStyle={{ width: "100%", height: "100%" }} // Set the frame size to match the container
         constraints={{ facingMode: "environment" }} // Set the camera facing mode to "environment"
       />
-      <p className="text-xl font-bold">Ticket: {ticketData}</p>
+      <p className="text-xl font-bold text-center">{ticketData}</p>
       <div className="flex justify-center pt-5 whitespace-pre confirmation-btns">
         {qrResult && (
           <>
