@@ -15,19 +15,19 @@ export const POST = async ({ body }) => {
             bodyText += chunk;
         }
         console.log(bodyText);
-        const { assistantId, assistantName, assistantPhone, assistantAssistance } = JSON.parse(bodyText);
-        if (!assistantId || !assistantName || !assistantPhone || !assistantAssistance) {
-            return NextResponse.json({
-                "status": "error",
-                "error": "Please provide all fields"
-            }, { status: 400 })
-        }
+        const { assistantId, assistantName, assistantPhone } = JSON.parse(bodyText);
+        // if (!assistantId || !assistantName || !assistantPhone) {
+        //     return NextResponse.json({
+        //         "status": "error",
+        //         "error": "Please provide all fields"
+        //     }, { status: 400 })
+        // }
         await connectDB();
         const assistant = new Assistant({
             assistantId,
             assistantName,
             assistantPhone,
-            assistantAssistance
+            assistantAssistance: false
         });
         await assistant.save();
         return NextResponse.json({
