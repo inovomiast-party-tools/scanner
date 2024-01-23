@@ -30,15 +30,21 @@ export const PATCH = async (req) => {
         for await (const chunk of req.body) {
             bodyText += chunk;
         }
-        console.log(bodyText);
+
+        // Convert ASCII values to JSON
+        const asciiValues = bodyText.split(',').map(Number);
+        const jsonString = String.fromCharCode(...asciiValues);
+        const bodyJson = JSON.parse(jsonString);
+
+        console.log(bodyJson);
+
         const id = req.url.split('api/assistants/')[1].split('/')[0];
         await connectDB();
-        const updatedAssistant = await Assistant.findOneAndUpdate({ assistantId: id}, JSON.parse(bodyText));
+        const updatedAssistant = await Assistant.findOneAndUpdate({ assistantId: id}, bodyJson);
         if (updatedAssistant === null) {
             return NextResponse.json({
                 "status": "error",
                 "error": "Assistant not found"
-    
             }, { status: 500 });
         }
         return NextResponse.json(updatedAssistant);
@@ -46,7 +52,6 @@ export const PATCH = async (req) => {
         return NextResponse.json({
             "status": "error",
             "error": error.message
-
         }, { status: 500 });
     }
 }
